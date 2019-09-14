@@ -1,0 +1,41 @@
+#!/bin/bash
+
+OUTFILE=""
+INFILE=""
+
+usage () { echo "Usage: strip_state_races -i <input_path> -o <output_path>"; }
+
+iflag=0
+oflag=0
+
+options='i:o:'
+while getopts $options opt; do
+  case ${opt} in
+    i )
+      iflag=1;
+      INFILE=$OPTARG
+      ;;
+    o )
+      oflag=1;
+      OUTFILE=$OPTARG
+      ;;
+    \?)
+      usage;
+      ;;
+  esac
+done
+
+if ((OPTIND == 1))
+then
+  echo "No options specified"
+  exit 1
+fi
+
+if [[ ( $iflag -eq 0 ) || ( $oflag -eq 0 ) ]]
+then
+  echo "-i and -o are required.";
+  usage;
+  exit 1;
+fi
+
+sed -n -e '/NC STATE/{p;n;}' $INFILE > $OUTFILE
